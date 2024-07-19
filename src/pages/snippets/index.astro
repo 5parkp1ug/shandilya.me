@@ -1,0 +1,29 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/Container.astro";
+import ArrowCard from "@components/ArrowCard.astro";
+import { SCRIPTS } from "@consts";
+
+const snippets = (await getCollection("snippets"));
+
+---
+
+<Layout title={SCRIPTS.TITLE} description={SCRIPTS.DESCRIPTION}>
+  <Container>
+    <div class="space-y-10" data-pagefind-ignore>
+      <div class="animate font-semibold text-black dark:text-white">
+        Snippets
+      </div>
+      <ul class="animate not-prose flex flex-col gap-4">
+        {
+          snippets.map((snippet) => (
+              <li>
+                <ArrowCard entry={snippet} />
+              </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Container>
+</Layout>

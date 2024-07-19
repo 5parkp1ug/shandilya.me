@@ -1,0 +1,130 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/Container.astro";
+import {SITE, HOME, SOCIALS} from "@consts";
+import ArrowCard from "@components/ArrowCard.astro";
+import Link from "@components/Link.astro";
+import {getCollection} from "astro:content";
+import type {CollectionEntry} from "astro:content";
+import { Icon } from "astro-icon/components";
+
+const blog = (await getCollection("blog"))
+    .filter((post) => !post.data.draft)
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+    .slice(0, SITE.NUM_POSTS_ON_HOMEPAGE);
+
+const projects: CollectionEntry<"projects">[] = (
+    await getCollection("projects")
+)
+    .filter((project) => !project.data.draft)
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+    .slice(0, SITE.NUM_PROJECTS_ON_HOMEPAGE);
+---
+
+<Layout title={HOME.TITLE} description={HOME.DESCRIPTION}>
+    <Container>
+        <h1 class="animate font-semibold text-black dark:text-white">
+            Abhishek Shandilya 👋
+        </h1>
+        <div class="space-y-16" data-pagefind-ignore>
+            <section>
+                <article class="space-y-4">
+          <span class="animate">
+            <p>
+              Hey there! I'm a software engineer hailing from Bangalore, India. My days are filled with crafting super scalable e-commerce solutions where I tackle complex challenges and turning them into elegant solutions.
+            </p>
+          </span>
+                    <span class="animate">
+            <p>
+              Currently, I work at
+                <a href="https://decathlon.co.uk" target="_blank" rel="nofollow noreferrer" class="inline-block">
+                    <Icon name="decathlon"/>
+                </a><a href="https://decathlon.co.uk" target="_blank" rel="nofollow noreferrer" class="inline-block decoration-dotted decoration-black/60 text-black/60 dark:decoration-white/60 hover:decoration-black/90 focus-visible:decoration-black/50 dark:hover:decoration-white/60 dark:focus-visible:decoration-white/50 focus-visible:text-black dark:text-white transition-colors duration-300 ease-in-out">Decathlon</a> building e-commerce solution for Business Integration.
+            </p>
+            </span>
+                    <span class="animate">
+            <p>
+              When I'm not busy coding away, you can find me hitting the open road on my bike, soaking in the sights and sounds of the city. Let's connect and chat all things tech and biking!
+            </p>
+          </span>
+                </article>
+            </section>
+
+            <section class="animate space-y-6">
+                <div class="flex flex-wrap items-center justify-between gap-y-2">
+
+                    <a href="/experience" class="h-8 rounded-lg px-3 flex items-center justify-center transition-colors duration-300 ease-in-out bg-black dark:bg-white/70 text-white dark:text-black" data-astro-cid-3ef6ksr2=""> Experience </a>
+                    <a href="/uses" class="h-8 rounded-lg px-3 flex items-center justify-center transition-colors duration-300 ease-in-out bg-black shadow-[-15px_0_30px_-5px_red,0_0_30px_-5px_blue,15px_0_30px_-5px_green] dark:bg-black text-white dark:text-white cursor-help hover:border-gray-700 hover:border-dotted border-transparent border-spacing-3 border-2"> What I use </a>
+                </div>
+            </section>
+
+            <section class="animate space-y-6">
+                <div class="flex flex-wrap items-center justify-between gap-y-2">
+                    <h2 class="font-semibold text-black dark:text-white">Latest posts</h2>
+                    <Link href="/blog"> See all posts</Link>
+                </div>
+                <ul class="not-prose flex flex-col gap-4">
+                    {
+                        blog.map((post) => (
+                                <li>
+                                    <ArrowCard entry={post}/>
+                                </li>
+                        ))
+                    }
+                </ul>
+            </section>
+
+            <section class="animate space-y-6">
+                <div class="flex flex-wrap items-center justify-between gap-y-2">
+                    <h2 class="font-semibold text-black dark:text-white">
+                        Recent projects
+                    </h2>
+                    <Link href="/projects"> See all projects</Link>
+                </div>
+                <ul class="not-prose flex flex-col gap-4">
+                    {
+                        projects.map((project) => (
+                                <li>
+                                    <ArrowCard entry={project}/>
+                                </li>
+                        ))
+                    }
+                </ul>
+            </section>
+
+            <section class="animate space-y-4">
+                <h2 class="font-semibold text-black dark:text-white">Let's Connect</h2>
+                <article>
+                    <p>
+                        If you want to get in touch with me about something or just to say
+                        hi, reach out on social media or send me an email.
+                    </p>
+                </article>
+                <ul class="not-prose flex flex-wrap gap-2">
+                    {
+                        SOCIALS.map((SOCIAL) => (
+                                <li class="flex gap-x-2 text-nowrap">
+                                    <Link
+                                            href={SOCIAL.HREF}
+                                            external
+                                            aria-label={`${SITE.TITLE} on ${SOCIAL.NAME}`}
+                                    >
+                                        {SOCIAL.NAME}
+                                    </Link>
+                                    {"/"}
+                                </li>
+                        ))
+                    }
+                    <li class="line-clamp-1">
+                        <Link
+                                href={`mailto:${SITE.EMAIL}`}
+                                aria-label={`Email ${SITE.TITLE}`}
+                        >
+                            {SITE.EMAIL}
+                        </Link>
+                    </li>
+                </ul>
+            </section>
+        </div>
+    </Container>
+</Layout>

@@ -1,0 +1,134 @@
+---
+title: "Print SQL Query executed in Django Shell"
+description: "Easily optimise & debug ORM performance issues by printing generate SQL in shell."
+date: "03/18/2024"
+tags:
+  - django
+  - orm
+---
+
+import Callout from "@/components/Callout.astro";
+
+---
+## Context
+
+When working with Django, understanding the SQL queries executed by each request can be crucial for debugging and 
+optimizing performance. This post will guide you through a solution to print SQL queries executed by each request in 
+Django shell, helping you identify slow queries and optimize them effectively.
+
+## Problem
+The main problem addressed by this solution is twofold:
+
+- Visibility: Gaining insight into the SQL queries each view executes and the time taken for each query.
+- Debugging: Assisting in the identification and debugging of slow queries.
+
+## Available Options
+Django offers some built-in tools and third-party packages to help with this, but each comes with its own set of limitations:
+
+### Django Debug Toolbar
+The Django Debug Toolbar is a powerful tool for debugging and optimizing SQL queries. However, it has some limitations:
+
+- It primarily works in the Django admin interface.
+- When using Django Rest Framework (DRF), you need to enable the "Browsable API," which might not be available in all projects.
+- If the Browsable API requires authentication, it adds an extra layer of complexity.
+  
+## Solution
+A more versatile and straightforward solution involves using Django's built-in connection API. This API provides access 
+to SQL queries and the time taken to execute them. By creating custom middleware, we can log these details for every 
+request, making it easier to monitor and debug SQL performance issues.
+
+## Step-by-Step Guide
+
+### Step 1: Create Custom Middleware
+First, create a custom middleware that will log SQL queries and their execution times.
+
+1. Create the middleware file:
+
+```bash
+touch myapp/middleware.py
+```
+
+2. Add the following code to middleware.py:
+
+```python
+from django.db import connection
+from django.conf import settings
+import os
+
+def terminal_width():
+    """
+    Function to compute the terminal width.
+    """
+    width = 0
+    try:
+        import struct, fcntl, termios
+        s = struct.pack('HHHH', 0, 0, 0, 0)
+        x = fcntl.ioctl(1, termios.TIOCGWINSZ, s)
+        width = struct.unpack('HHHH', x)[1]
+    except:
+        pass
+    if width <= 0:
+        try:
+            width = int(os.environ['COLUMNS'])
+        except:
+            pass
+    if width <= 0:
+        width = 80
+    return width
+
+
+def SqlPrintingMiddleware(get_response):
+    def middleware(request):
+        response = get_response(request)
+        if not settings.DEBUG or \
+                len(connection.queries) == 0 or\
+                request.path_info.startswith(settings.MEDIA_URL) or \
+                '/admin/jsi18n/' in request.path_info:
+            return response
+        indentation = 2
+        print("\n\n%s\033[1;35m[SQL Queries for]\033[1;34m %s\033[0m\n" % (" " * indentation, request.path_info))
+        width = terminal_width()
+        total_time = 0.0
+        for query in connection.queries:
+            nice_sql = query['sql'].replace('"', '').replace(',', ', ')
+            sql = "\033[1;31m[%s]\033[0m %s" % (query['time'], nice_sql)
+            total_time = total_time + float(query['time'])
+            while len(sql) > width - indentation:
+                print("%s%s" % (" " * indentation, sql[:width - indentation]))
+                sql = sql[width - indentation:]
+            print("%s%s\n" % (" " * indentation, sql))
+        replace_tuple = (" " * indentation, str(total_time))
+        print("%s\033[1;32m[TOTAL TIME: %s seconds]\033[0m" % replace_tuple)
+        print("%s\033[1;32m[TOTAL QUERIES: %s]\033[0m" % (" " * indentation, len(connection.queries)))
+        return response
+    return middleware
+```
+
+### Step 2: Update Django Settings
+Add the custom middleware to your Django settings:
+
+1. Open settings.py.
+2. Add the middleware class to the MIDDLEWARE setting:
+
+```python
+MIDDLEWARE = [
+    # Other middleware...
+    'myapp.middleware.SqlPrintingMiddleware',
+]
+```
+
+### Step 3: Test the Middleware
+Run your Django server and make a few requests to see the SQL queries and execution times printed in the console.
+
+```bash
+python manage.py runserver
+```
+
+Visit different views and observe the output in your terminal. You should see the SQL queries and the time taken to execute each one.
+
+## Conclusion
+By using this custom middleware, you can easily log and monitor SQL queries executed by each request in Django. This approach is particularly useful for debugging and optimizing slow queries, and it overcomes the limitations of tools like Django Debug Toolbar, especially when working with Django Rest Framework or in environments where the Browsable API is not enabled.
+
+<Callout>
+This solution is a quick and effective way to gain insights into your database interactions and improve the performance of your Django applications.
+</Callout>

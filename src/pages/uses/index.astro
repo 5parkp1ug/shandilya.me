@@ -1,0 +1,260 @@
+---
+import {getCollection} from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/Container.astro";
+import ArrowCard from "@components/ArrowCard.astro";
+import {PROJECTS} from "@consts";
+import Link from "../../components/Link.astro";
+import {Icon} from "astro-icon/components";
+
+const tabs = [
+    {
+        id: 'tab1',
+        title: 'Development',
+        data: [
+            {
+                "title": "Java",
+                "description": "Spring, Spring Security, Spring JPA, Webflux",
+                "icon": "devicon:java",
+                "url": "https://spring.io/"
+            },
+            {
+                "title": "Python",
+                "description": "Django, Django Rest Framework, Flask, FastAPI, Pandas",
+                "icon": "devicon:python",
+                "url": "https://www.python.org/"
+            },
+            {
+                "title": "Javascript",
+                "description": "React, Astro, Gatsby, Nodejs",
+                "icon": "devicon:javascript",
+                "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript"
+            },
+            {
+                "title": "Redis",
+                "description": "The caffeine boost for your data – always ready in a flash!",
+                "icon": "devicon:redis",
+                "url": "https://redis.io/"
+            },
+            {
+                "title": "Kafka",
+                "description": "The party planner for your data streams – where every event is a VIP.",
+                "icon": "uses/kafka",
+                "url": "https://support.apple.com/en-in/111874"
+            }
+        ]
+    },
+    {
+        id: 'tab2',
+        title: 'Sys Ops',
+        data: [
+            {
+                "title": "Docker",
+                "description": "Your applications' favorite travel container – packing light and sailing smoothly.",
+                "icon": "devicon:docker",
+                "url": "https://www.docker.com/"
+            },
+            {
+                "title": "Kubernetes",
+                "description": "The traffic cop for your cloud – keeping your apps in line, one pod at a time.",
+                "icon": "devicon:kubernetes",
+                "url": "https://kubernetes.io/"
+            },
+            {
+                "title": "Terraform",
+                "description": "The architect with OCD – infrastructure as code, neat and precise.",
+                "icon": "devicon:terraform",
+                "url": "https://www.terraform.io/"
+            },
+            {
+                "title": "Github Actions",
+                "description": "Your code’s personal assistant – automating everything while you sip coffee",
+                "icon": "devicon:githubactions",
+                "url": "https://github.com/features/actions"
+            }
+        ]
+    },
+    {
+        id: 'tab3',
+        title: 'Software',
+        data: [
+            {
+                "title": "Intellij Idea",
+                "description": "The genius coder's secret weapon – making you look smarter since forever.",
+                "icon": "devicon:intellij",
+                "url": "https://www.jetbrains.com/idea/"
+            },
+            {
+                "title": "VS Code",
+                "description": "The Swiss Army knife of editors – lightweight, versatile, and always handy.",
+                "icon": "devicon:vscode",
+                "url": "https://code.visualstudio.com/",
+            },
+            {
+                "title": "Postman",
+                "description": "The mail carrier for APIs – delivering requests with a smile.",
+                "icon": "devicon:postman",
+                "url": "https://www.postman.com/"
+            },
+            {
+                "title": "Notion",
+                "description": "The digital Swiss Army knife for your brain – notes, tasks, and databases in one.",
+                "icon": "devicon:notion",
+                "url": "https://www.notion.so/"
+            },
+            {
+                "title": "Sublime Text",
+                "description": "The sleek sports car of text editors – fast, stylish, and ready to code.",
+                "icon": "uses/sublime",
+                "url": "https://www.sublimetext.com/",
+            },
+            {
+                "title": "iTerm with ZSH",
+                "description": "The superhero cape for your terminal – giving you powers you didn't know you had.",
+                "icon": "devicon:ohmyzsh",
+                "url": "https://ohmyz.sh/"
+            }
+        ]
+    },
+    {
+        id: 'tab4',
+        title: 'Hardware',
+        data: [
+            {
+                "title": "Macbook Pro M1",
+                "description": "Cuz I love Apple products",
+                "icon": "uses/macbook",
+                "url": "https://www.amazon.com/Apple-MacBook-16-inch-10%E2%80%91core-16%E2%80%91core/dp/B09JQML3NL"
+            },
+            {
+                "title": "iPhone 12 Pro Max",
+                "description": "Do i need to say again?",
+                "icon": "uses/iphone",
+                "url": "https://support.apple.com/en-in/111874"
+            },
+            {
+                "title": "Dell 24\" Monitor",
+                "description": "Do i need to say again?",
+                "icon": "uses/monitor",
+                "url": "https://amzn.in/d/0gVbYXGV"
+            },
+            {
+                "title": "Amazfit T-Rex 2",
+                "description": "Do i need to say again?",
+                "icon": "uses/watch",
+                "url": "https://amzn.in/d/07g04Cwa"
+            },
+            {
+                "title": "Keychron K2 Mechanical Keyboard",
+                "description": "My first mechanical keyboard",
+                "icon": "uses/keyboard",
+                "url": "https://keychron.in/product/k2-hot-swappable/"
+            },
+            {
+                "title": "Logitech MX Master 3",
+                "description": "My first mechanical keyboard",
+                "icon": "uses/mouse",
+                "url": "https://amzn.in/d/04DQzlGV"
+            },
+            {
+                "title": "Edifier 1700BT Speakers",
+                "description": "Because my impeccable taste in music deserves more than just my headphones!",
+                "icon": "uses/speakers",
+                "url": "https://amzn.in/d/06P6p0SZ"
+            }
+        ]
+    }
+];
+---
+
+<Layout title={PROJECTS.TITLE} description={PROJECTS.DESCRIPTION}>
+    <Container>
+        <div class="space-y-10" data-pagefind-ignore>
+            <div class="animate font-bold text-black dark:text-white">
+                What I use?
+            </div>
+            <div class="animate not-prose flex flex-col gap-4">
+                A treasure trove of gizmos and gadgets that make me appear brainier than a rocket scientist when I'm
+                really just winging it!
+            </div>
+            <div class="animate">
+                <div class="rounded">
+                    <div>
+                        <ul class="flex" id="tabs">
+                            {tabs.map(tab => (
+                                    <li class="-mb-px mr-1">
+                                        <button
+                                                class="text-xl inline-block py-2 px-4 font-semibold"
+                                                data-tab={tab.id}
+                                        >
+                                            {tab.title}
+                                        </button>
+                                    </li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div class="p-4">
+                        {tabs.map(tab => (
+                                <div id={tab.id} class="tab-content">
+                                    {tab.data.map(item => (
+                                            <div>
+                                                <div class="animate mb-4 flex flex-row items-start contents-start">
+                                                    <div class="mr-3 p-1">
+                                                        <Icon is:inline title={item.title} size={25}
+                                                              name={item.icon}/>
+                                                    </div>
+                                                    <div>
+                                                        <Link href={item.url} external
+                                                              extraClass="font-semibold ">{item.title}</Link>
+                                                        {item.description &&
+                                                                <div class="text-sm mt-0.5">{item.description}</div>}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                    ))}
+                                </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Container>
+</Layout>
+
+<style>
+    .hidden {
+        display: none;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tabs = document.querySelectorAll('[data-tab]');
+        const contents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function (this: Element) {
+                const tabId: string = this.getAttribute('data-tab') as string;
+
+                contents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                let activeContent = document.getElementById(tabId);
+                if(activeContent) {
+                    activeContent.classList.remove('hidden');
+                }
+
+                tabs.forEach(button => {
+                    button.classList.remove('dark:text-white', 'border-b', 'border-blue-500');
+                });
+                this.classList.add('dark:text-white', 'border-b', 'border-blue-500');
+                this.classList.remove('text-gray-500');
+            });
+        });
+
+        // Show the first tab by default
+        let firstTab = tabs[0] as HTMLElement;
+        firstTab.click();
+    });
+</script>

@@ -1,0 +1,89 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/Container.astro";
+import {SITE, HOME, SOCIALS} from "@consts";
+import ArrowCard from "@components/ArrowCard.astro";
+import Link from "@components/Link.astro";
+import {getCollection} from "astro:content";
+import type {CollectionEntry} from "astro:content";
+import {Icon} from "astro-icon/components";
+
+const experiences = [
+    {
+        start: "Sept 2022",
+        end: "",
+        jobTitle: "Technical Leader",
+        company: "Decathlon",
+        description: "As a Technical Leader, my job is to build integration with other marketplaces as part of Decathlon's initiative of SWO (Sell With Others).",
+        link: "https://decathlon.co.uk",
+        logo: "decathlon",
+    },
+    {
+        start: "Sep 2021",
+        end: "Sep 2022",
+        jobTitle: "Tech Lead",
+        company: "Prep.Study",
+        description: "Re-designed an educational app for 20K+ students and 5K teachers using Django, Celery, PostgreSQL, Flask, and RabbitMQ. Architected the system, implemented CI/CD with Docker, Jenkins, GCP, provided technical guidance, and maintained the legacy app.",
+        link: "https://prep.study",
+        logo: "prep-study",
+    },
+    {
+        start: "Jun 2020",
+        end: "Sep 2021",
+        jobTitle: "Full Stack Developer",
+        company: "Recruiterbox (now Trakstar)",
+        description: "Upgraded the Python & MySQL environment for Recruiterbox, fixing over 20k test cases and more than 30k lines of code. Dockerized UAT and testing, reducing customer-facing issues by 60% through bug monitoring and fixes.",
+        link: "https://hire.trakstar.com/",
+        logo: "recruiterbox",
+    },
+    {
+        start: "Jun 2018",
+        end: "Sep 2020",
+        jobTitle: "Full Stack Developer",
+        company: "Petsearch",
+        description: "Developed Petsearch’s backend using Django, Redis, Celery, and Postgres, with Firebase for real-time chat, notifications, and in-app messaging, PostGIS for location-based services using Leaflet and OpenStreetMaps. Designed a custom admin dashboard for analytics and data visualization.",
+        link: "",
+        logo: "petsearch",
+    },
+    {
+        start: "Jul 2012",
+        end: "Jan 2017",
+        jobTitle: "Security Engineer",
+        company: "Microland",
+        description: "Managed design, implementation, and risk assessments for device strategy, design, and operations, handling daily updates and patches for network and security devices. Served as the SPOC for managing 7K+ PAC files across 10K+ subnets, and analyzed and mitigated issues related to SSL, authentication, SSO, cloud proxy, malware detection, URL categorization, and cloud app control filters.",
+        link: "https://www.microland.com/",
+        logo: "microland",
+    },
+]
+---
+
+<Layout title={HOME.TITLE} description={HOME.DESCRIPTION}>
+    <Container>
+        <div class="space-y-10">
+            <div class="text-2xl animate font-semibold text-black dark:text-white">
+                Experience
+            </div>
+            <section class="animate" data-pagefind-ignore>
+                {experiences.map(experience => (
+                        <div class="animate mb-4 flex flex-row items-start contents-start">
+                            <div class="mr-3 p-1">
+                                <Icon size={50} name={experience.logo}/>
+                            </div>
+                            <div class="mb-14 animate">
+                                <Link external href={experience.link} extraClass="text-l">
+                                    {experience.company}
+                                </Link>
+                                <div class="my-1.5 text-sm">
+                                    {experience.description}
+                                </div>
+                                <div class="text-sm font-bold uppercase py-0.5 px-1 rounded inline-block bg-black/5 dark:bg-white/20 text-black/75 dark:text-white/75">
+                                    {experience.jobTitle}
+                                    :: {experience.start} {experience.end == "" ? "(Current)" : '- ' + experience.end}
+                                </div>
+                            </div>
+                        </div>
+                ))}
+            </section>
+        </div>
+    </Container>
+</Layout>
